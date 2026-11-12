@@ -1,0 +1,16 @@
+{
+    "name": "sf2e-spell-chips",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Foundry VTT module adding working spell chips to the Starfinder Second Edition system.",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "test": "node --test",
+        "build:packs": "node tools/build-packs.mjs",
+        "build": "npm run build:packs"
+    },
+    "devDependencies": {
+        "@foundryvtt/foundryvtt-cli": "^3.0.0"
+    }
+}
