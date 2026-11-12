@@ -1,0 +1,59 @@
+{
+    "SF2E_SPELL_CHIPS": {
+        "Category": "Spell Chip",
+        "NameTemplate": "Spell Chip of {name} (Rank {level})",
+        "Settings": {
+            "HostSlugs": {
+                "Name": "Chip host items",
+                "Hint": "Comma-separated item slugs (or names) that can hold a spell chip. A GM can also allow any single item from the install dialog."
+            }
+        },
+        "Status": {
+            "InstalledIn": "Installed in {device}",
+            "NotInstalled": "Not installed",
+            "Broken": "Broken",
+            "Destroyed": "Destroyed",
+            "Overclocked": "Overclocked today",
+            "Holds": "Chip: {chip}"
+        },
+        "Install": {
+            "Control": "Install spell chip",
+            "Title": "Install {chip}",
+            "Label": "Device",
+            "None": "None (uninstall)",
+            "Occupied": "{device} (holds {chip})",
+            "OtherGear": "Other gear (will be marked as a computer)",
+            "Confirm": "Install",
+            "MarkHostTitle": "Allow spell chips?",
+            "MarkHostContent": "<p><strong>{device}</strong> is not a known computer or comm unit. Allow it to hold spell chips?</p>",
+            "NoHosts": "{actor} has no comm unit or computer to install a spell chip in.",
+            "NotAHost": "{device} cannot hold a spell chip.",
+            "DeviceOccupied": "{device} already holds {chip}. Each device can hold only one spell chip.",
+            "Installed": "{chip} installed in {device}.",
+            "Uninstalled": "{chip} uninstalled."
+        },
+        "Cast": {
+            "Destroyed": "{chip} is destroyed and can no longer be used.",
+            "Broken": "{chip} is broken and must be repaired before it can be used.",
+            "NotInstalled": "{chip} must be installed in a comm unit or computer before it can be used.",
+            "DeviceNotHeld": "You must hold {device} in one hand to cast from {chip}."
+        },
+        "Overclock": {
+            "Title": "Overclock {chip}?",
+            "Content": "<p><strong>{chip}</strong> has already been used today.</p><p>Overclocking casts the spell again, then requires a DC {dc} flat check: on a success the chip is <strong>broken</strong>, on a failure it is <strong>destroyed</strong>.</p>",
+            "Confirm": "Overclock",
+            "Flavor": "<strong>Overclock: {chip}</strong><br>Flat check DC {dc}",
+            "ResultBroken": "Success: the chip is broken.",
+            "ResultDestroyed": "Failure: the chip is destroyed."
+        },
+        "Burnout": {
+            "Title": "Overclock {chip} again?",
+            "Content": "<p><strong>{chip}</strong> has already been overclocked today.</p><p>Overclocking it again <strong>destroys the chip and casts no spell</strong>.</p>",
+            "Confirm": "Destroy the chip",
+            "Message": "<p><strong>{actor}</strong> overclocks <strong>{chip}</strong> a second time today. The chip is destroyed and no spell is cast.</p>"
+        },
+        "Error": {
+            "NoConsumableClass": "SF2e Spell Chips could not hook into the system's consumable items. Spell chip rules are not being enforced."
+        }
+    }
+}

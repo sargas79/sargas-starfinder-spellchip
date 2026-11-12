@@ -1,0 +1,5 @@
+node_modules/
+# Compiled LevelDB pack; built from packs/_source by `npm run build`
+packs/spell-chips/
+dist/
+*.log

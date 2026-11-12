@@ -1,0 +1,51 @@
+name: Release
+
+# Publishing a GitHub release builds the module and attaches module.json and module.zip to it.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npm run build
+
+      - name: Stamp the manifest with this release
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const { TAG, REPO } = process.env;
+            const manifest = JSON.parse(fs.readFileSync("module.json", "utf8"));
+            manifest.version = TAG.replace(/^v/, "");
+            manifest.url = `https://github.com/${REPO}`;
+            manifest.manifest = `https://github.com/${REPO}/releases/latest/download/module.json`;
+            manifest.download = `https://github.com/${REPO}/releases/download/${TAG}/module.zip`;
+            fs.writeFileSync("module.json", JSON.stringify(manifest, null, 4) + "\n");
+          '
+
+      - name: Package
+        run: zip -r module.zip module.json LICENSE README.md lang scripts styles packs/spell-chips
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" module.json module.zip --clobber
