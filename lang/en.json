@@ -24,8 +24,6 @@
             "Occupied": "{device} (holds {chip})",
             "OtherGear": "Other gear (will be marked as a computer)",
             "Confirm": "Install",
-            "MarkHostTitle": "Allow spell chips?",
-            "MarkHostContent": "<p><strong>{device}</strong> is not a known computer or comm unit. Allow it to hold spell chips?</p>",
             "NoHosts": "{actor} has no comm unit or computer to install a spell chip in.",
             "NotAHost": "{device} cannot hold a spell chip.",
             "DeviceOccupied": "{device} already holds {chip}. Each device can hold only one spell chip.",

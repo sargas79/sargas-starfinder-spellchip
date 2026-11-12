@@ -1,7 +1,7 @@
 import { DEFAULT_HOST_SLUGS, MODULE_ID, PACK_ID, SETTINGS, SPELL_ITEM_TYPE, TEMPLATE_IDS } from "./constants.js";
 import { registerCastWrapper } from "./casting.js";
 import { t } from "./chip.js";
-import { onDeleteItem, onPreCreateItem, onRest } from "./install.js";
+import { onDeleteItem, onPreCreateItem, onPreUpdateItem, onRest } from "./install.js";
 import { onRenderActorSheet } from "./ui.js";
 
 function rerenderActorSheets() {
@@ -41,6 +41,7 @@ Hooks.once("init", () => {
 });
 
 Hooks.on("preCreateItem", onPreCreateItem);
+Hooks.on("preUpdateItem", onPreUpdateItem);
 Hooks.on("deleteItem", onDeleteItem);
 Hooks.on("pf2e.restForTheNight", onRest);
 Hooks.on("renderActorSheet", onRenderActorSheet);

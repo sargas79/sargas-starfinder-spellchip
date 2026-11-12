@@ -38,6 +38,23 @@ export function resolveOverclock(total, dc) {
     return total >= dc ? "broken" : "destroyed";
 }
 
+/**
+ * Adjust a change to a chip's remaining uses.
+ * A destroyed chip never regains its charge. Any other chip that regains a charge has started a new
+ * day, however that happened (the rest macro or a GM editing the item), so its overclock mark is cleared.
+ *
+ * @param {object} chip
+ * @param {boolean} chip.destroyed
+ * @param {boolean} chip.overclocked
+ * @param {number} chip.uses     Uses before the change
+ * @param {number} newUses       Uses the change asks for
+ * @returns {{uses: number, clearOverclock: boolean}}
+ */
+export function resolveRecharge({ destroyed, overclocked, uses }, newUses) {
+    if (destroyed) return { uses: 0, clearOverclock: false };
+    return { uses: newUses, clearOverclock: overclocked && newUses > uses };
+}
+
 /** Turn an item name into a slug the same way the system does for simple names */
 export function sluggify(text) {
     return String(text ?? "")

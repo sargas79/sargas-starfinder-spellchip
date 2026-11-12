@@ -1,6 +1,18 @@
 import { FLAGS } from "./constants.js";
-import { actorChips, escapeHTML, flagPath, getDevice, getFlag, getInstalledChip, isChip, isHost, t } from "./chip.js";
-import { findOccupant } from "./logic.js";
+import {
+    actorChips,
+    escapeHTML,
+    flagPath,
+    getDevice,
+    getFlag,
+    getInstalledChip,
+    isChip,
+    isChipDestroyed,
+    isHost,
+    isOverclocked,
+    t,
+} from "./chip.js";
+import { findOccupant, resolveRecharge } from "./logic.js";
 
 /**
  * Install a chip in a device on the same actor. Each device holds one chip.
@@ -92,13 +104,30 @@ export async function promptInstall(chip) {
     return installChip(chip, device);
 }
 
-/** A chip arriving on an actor cannot still be installed in a device its previous owner had */
+/**
+ * A new chip keeps its install only if the device exists on its actor and is free. That drops the
+ * install when a chip moves to another actor, and when a copy is made next to an installed original.
+ */
 export function onPreCreateItem(item) {
     if (!isChip(item)) return;
     const deviceId = getFlag(item, FLAGS.installedIn);
-    if (deviceId && !item.parent?.items?.get(deviceId)) {
+    if (!deviceId) return;
+    const device = item.parent?.items?.get(deviceId);
+    if (!device || getInstalledChip(device)) {
         item.updateSource({ [flagPath(FLAGS.installedIn)]: null });
     }
+}
+
+/** Keep a destroyed chip without a charge, and clear the overclock mark when a chip is recharged */
+export function onPreUpdateItem(item, changes) {
+    if (!isChip(item)) return;
+    const newUses = changes.system?.uses?.value;
+    if (typeof newUses !== "number") return;
+
+    const chip = { destroyed: isChipDestroyed(item), overclocked: isOverclocked(item), uses: item.system.uses.value };
+    const result = resolveRecharge(chip, newUses);
+    changes.system.uses.value = result.uses;
+    if (result.clearOverclock) foundry.utils.setProperty(changes, flagPath(FLAGS.overclocked), false);
 }
 
 /** Removing a device uninstalls the chip that was in it */
@@ -112,7 +141,10 @@ export function onDeleteItem(item, _options, userId) {
     if (updates.length) actor.updateEmbeddedDocuments("Item", updates);
 }
 
-/** A night's rest clears the "overclocked today" mark. The system restores the daily charge itself. */
+/**
+ * A night's rest clears the "overclocked today" mark. The system restores the daily charge itself,
+ * which already clears the mark on chips that were spent; this covers chips recharged beforehand.
+ */
 export function onRest(actor) {
     if (!actor?.isOwner) return;
     const updates = actorChips(actor)

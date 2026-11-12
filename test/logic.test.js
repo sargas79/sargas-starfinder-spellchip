@@ -6,6 +6,7 @@ import {
     parseSlugList,
     resolveCastAttempt,
     resolveOverclock,
+    resolveRecharge,
     sluggify,
 } from "../scripts/logic.js";
 
@@ -89,4 +90,25 @@ test("a device holds one chip", () => {
     assert.deepEqual(findOccupant(chips, "dev1", "b"), chips[0]);
     assert.equal(findOccupant(chips, "dev1", "a"), null);
     assert.equal(findOccupant(chips, "dev2", "b"), null);
+});
+
+test("recharging a spent chip clears its overclock mark", () => {
+    const chip = { destroyed: false, overclocked: true, uses: 0 };
+    assert.deepEqual(resolveRecharge(chip, 1), { uses: 1, clearOverclock: true });
+});
+
+test("spending or keeping a charge leaves the overclock mark alone", () => {
+    assert.deepEqual(resolveRecharge({ destroyed: false, overclocked: true, uses: 0 }, 0), {
+        uses: 0,
+        clearOverclock: false,
+    });
+    assert.deepEqual(resolveRecharge({ destroyed: false, overclocked: false, uses: 1 }, 0), {
+        uses: 0,
+        clearOverclock: false,
+    });
+});
+
+test("a destroyed chip never regains a charge", () => {
+    const chip = { destroyed: true, overclocked: true, uses: 0 };
+    assert.deepEqual(resolveRecharge(chip, 1), { uses: 0, clearOverclock: false });
 });

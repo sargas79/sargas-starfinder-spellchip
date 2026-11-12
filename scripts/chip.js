@@ -52,13 +52,24 @@ export function getInstalledChip(device) {
     return actorChips(device.actor).find((c) => getFlag(c, FLAGS.installedIn) === device.id) ?? null;
 }
 
+/** The parsed host slug setting, rebuilt only when the setting's text changes */
+const hostSlugCache = { raw: null, slugs: new Set() };
+
+function hostSlugs() {
+    const raw = game.settings.get(MODULE_ID, SETTINGS.hostSlugs);
+    if (raw !== hostSlugCache.raw) {
+        hostSlugCache.raw = raw;
+        hostSlugCache.slugs = parseSlugList(raw);
+    }
+    return hostSlugCache.slugs;
+}
+
 /** Whether an item can hold a spell chip */
 export function isHost(item) {
     if (!isPhysical(item) || isChip(item)) return false;
-    const hostSlugs = parseSlugList(game.settings.get(MODULE_ID, SETTINGS.hostSlugs));
     return isHostCandidate(
         { slug: item.slug, name: item.name, flagged: getFlag(item, FLAGS.host) === true },
-        hostSlugs,
+        hostSlugs(),
     );
 }
 
